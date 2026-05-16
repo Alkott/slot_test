@@ -2,6 +2,8 @@ import { Application } from 'pixi.js'
 import { SlotGame } from './SlotGame'
 import { Controls } from './ui/Controls'
 import { FpsCounter } from './ui/FpsCounter'
+import { computeMachineLayout } from './layout'
+import { MAX_SYMBOL_SIZE } from './config'
 
 async function main(): Promise<void> {
   const app = new Application()
@@ -22,10 +24,12 @@ async function main(): Promise<void> {
   const machines: SlotGame[] = []
 
   function relayout(): void {
+    if (machines.length === 0) return
     const W = app.screen.width
     const H = app.screen.height
-    const w = W / machines.length
-    machines.forEach((m, i) => m.setViewport(i * w, w, H))
+    const preferredWidth = machines[0].reelCount * MAX_SYMBOL_SIZE
+    const layouts = computeMachineLayout(W, H, machines.length, preferredWidth)
+    machines.forEach((m, i) => m.setViewport(layouts[i].x, layouts[i].y, layouts[i].width, layouts[i].height))
   }
 
   function addMachine(): void {

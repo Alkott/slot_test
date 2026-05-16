@@ -8,7 +8,7 @@ export class SlotGame {
   private reelContainer = new Container()
   private app: Application
   private rows: number = ROWS
-  private viewport = { x: 0, width: 0, height: 0 }
+  private viewport = { x: 0, y: 0, width: 0, height: 0 }
   private spinCompleteCallback: (() => void) | null = null
   private readonly tickerFn: (ticker: Ticker) => void
 
@@ -26,8 +26,8 @@ export class SlotGame {
     app.ticker.add(this.tickerFn)
   }
 
-  setViewport(x: number, width: number, height: number): void {
-    this.viewport = { x, width, height }
+  setViewport(x: number, y: number, width: number, height: number): void {
+    this.viewport = { x, y, width, height }
     this.layout()
   }
 
@@ -74,9 +74,10 @@ export class SlotGame {
   get isSpinning(): boolean { return !this.reels.every((r) => r.isIdle) }
 
   private layout(): void {
-    const { x, width, height } = this.viewport
+    const { x, y, width, height } = this.viewport
     if (width === 0 || height === 0) return
     this.reelContainer.x = x
+    this.reelContainer.y = y
     const layouts = computeLayout(width, height, this.reels.length, this.rows, MAX_SYMBOL_SIZE)
     this.reels.forEach((reel, i) => {
       const l = layouts[i]
