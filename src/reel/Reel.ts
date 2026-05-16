@@ -97,7 +97,7 @@ export class Reel extends Container {
           this.velocity = 0
           while (this.scrollOffset >= this.symbolHeight) {
             this.scrollOffset -= this.symbolHeight
-            this.recycleTop()
+            this.recycleBottom()
           }
           this.snapStartOffset = this.scrollOffset
           this.state = SpinState.SNAPPING
@@ -118,20 +118,20 @@ export class Reel extends Container {
     this.scrollOffset += this.velocity * deltaTime
     while (this.scrollOffset >= this.symbolHeight) {
       this.scrollOffset -= this.symbolHeight
-      this.recycleTop()
+      this.recycleBottom()
     }
     this.updatePositions()
   }
 
-  private recycleTop(): void {
-    const top = this.symbols.shift()!
-    this.symbols.push(top)
-    top.randomize(this.symbolWidth, this.symbolHeight)
+  private recycleBottom(): void {
+    const bottom = this.symbols.pop()!
+    this.symbols.unshift(bottom)
+    bottom.randomize(this.symbolWidth, this.symbolHeight)
   }
 
   private updatePositions(): void {
     for (let i = 0; i < this.symbols.length; i++) {
-      this.symbols[i].y = (i - 1) * this.symbolHeight + this.scrollOffset
+      this.symbols[i].y = (i - 1) * this.symbolHeight - this.scrollOffset
     }
   }
 }
