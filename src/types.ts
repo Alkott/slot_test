@@ -11,4 +11,5 @@ export interface ReelConfig {
   symbolWidth: number;
   symbolHeight: number;
   x: number;
+  y: number;
 }

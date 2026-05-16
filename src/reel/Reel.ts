@@ -33,6 +33,7 @@ export class Reel extends Container {
 
   resize(cfg: ReelConfig): void {
     this.x = cfg.x
+    this.y = cfg.y
     this.rows = cfg.rows
     this.symbolWidth = cfg.symbolWidth
     this.symbolHeight = cfg.symbolHeight
