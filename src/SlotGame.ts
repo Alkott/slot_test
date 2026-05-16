@@ -1,7 +1,7 @@
 import { Application, Container } from 'pixi.js'
 import { Reel } from './reel/Reel'
 import { FpsCounter } from './ui/FpsCounter'
-import { ROWS, SYMBOL_SIZE } from './config'
+import { ROWS, MAX_SYMBOL_SIZE } from './config'
 import { computeLayout } from './layout'
 
 export class SlotGame {
@@ -82,10 +82,10 @@ export class SlotGame {
   private layout(): void {
     const w = this.app.screen.width
     const h = this.app.screen.height
-    const layouts = computeLayout(w, h, this.reels.length, SYMBOL_SIZE)
+    const layouts = computeLayout(w, h, this.reels.length, this.rows, MAX_SYMBOL_SIZE)
     this.reels.forEach((reel, i) => {
       const l = layouts[i]
-      reel.resize({ rows: this.rows, symbolWidth: l.size, symbolHeight: l.size, x: l.x, y: l.y })
+      reel.resize({ rows: this.rows, symbolWidth: l.symbolWidth, symbolHeight: l.symbolHeight, x: l.x, y: l.y })
     })
   }
 }
