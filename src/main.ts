@@ -8,7 +8,7 @@ async function main(): Promise<void> {
     width: window.innerWidth,
     height: window.innerHeight,
     backgroundColor: 0x1a1a2e,
-    resolution: window.devicePixelRatio || 1,
+    resolution: window.devicePixelRatio,
     autoDensity: true,
   })
   document.body.insertBefore(app.canvas, document.body.firstChild)
@@ -34,4 +34,4 @@ async function main(): Promise<void> {
   controls.update(game.reelCount, game.isSpinning)
 }
 
-main()
+main().catch(console.error)
