@@ -1,38 +1,34 @@
-import { Application, Container } from 'pixi.js'
+import { Application, Container, Ticker } from 'pixi.js'
 import { Reel } from './reel/Reel'
-import { FpsCounter } from './ui/FpsCounter'
 import { ROWS, MAX_SYMBOL_SIZE } from './config'
 import { computeLayout } from './layout'
 
 export class SlotGame {
   private reels: Reel[] = []
   private reelContainer = new Container()
-  private fpsCounter: FpsCounter
   private app: Application
   private rows: number = ROWS
-
+  private viewport = { x: 0, width: 0, height: 0 }
   private spinCompleteCallback: (() => void) | null = null
+  private readonly tickerFn: (ticker: Ticker) => void
 
   constructor(app: Application) {
     this.app = app
     app.stage.addChild(this.reelContainer)
 
-    this.fpsCounter = new FpsCounter()
-    app.stage.addChild(this.fpsCounter)
-
-    app.ticker.add((ticker) => {
+    this.tickerFn = (ticker) => {
       for (const reel of this.reels) reel.update(ticker.deltaTime)
-      this.fpsCounter.update(ticker.deltaMS)
       if (this.spinCompleteCallback && this.reels.every((r) => r.isIdle)) {
         this.spinCompleteCallback()
         this.spinCompleteCallback = null
       }
-    })
+    }
+    app.ticker.add(this.tickerFn)
+  }
 
-    window.addEventListener('resize', () => {
-      app.renderer.resize(window.innerWidth, window.innerHeight)
-      this.layout()
-    })
+  setViewport(x: number, width: number, height: number): void {
+    this.viewport = { x, width, height }
+    this.layout()
   }
 
   addReel(): void {
@@ -46,7 +42,7 @@ export class SlotGame {
     if (this.reels.length <= 1) return
     const reel = this.reels.pop()!
     this.reelContainer.removeChild(reel)
-    reel.destroy()
+    reel.destroy({ children: true })
     this.layout()
   }
 
@@ -67,22 +63,21 @@ export class SlotGame {
     for (const reel of this.reels) reel.spin()
   }
 
-  get reelCount(): number {
-    return this.reels.length
+  destroy(): void {
+    this.app.ticker.remove(this.tickerFn)
+    this.app.stage.removeChild(this.reelContainer)
+    this.reelContainer.destroy({ children: true })
   }
 
-  get rowCount(): number {
-    return this.rows
-  }
-
-  get isSpinning(): boolean {
-    return !this.reels.every((r) => r.isIdle)
-  }
+  get reelCount(): number { return this.reels.length }
+  get rowCount(): number { return this.rows }
+  get isSpinning(): boolean { return !this.reels.every((r) => r.isIdle) }
 
   private layout(): void {
-    const w = this.app.screen.width
-    const h = this.app.screen.height
-    const layouts = computeLayout(w, h, this.reels.length, this.rows, MAX_SYMBOL_SIZE)
+    const { x, width, height } = this.viewport
+    if (width === 0 || height === 0) return
+    this.reelContainer.x = x
+    const layouts = computeLayout(width, height, this.reels.length, this.rows, MAX_SYMBOL_SIZE)
     this.reels.forEach((reel, i) => {
       const l = layouts[i]
       reel.resize({ rows: this.rows, symbolWidth: l.symbolWidth, symbolHeight: l.symbolHeight, x: l.x, y: l.y })
