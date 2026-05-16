@@ -1,4 +1,4 @@
-export const ATLAS_URL = '/symbols.json'
+export const ATLAS_URL = `${import.meta.env.BASE_URL}symbols.json`
 
 export const SYMBOL_TEXTURE_NAMES: string[] = [
   '10_blur', '9_blur', 'a_blur', 'bronze_coin_blur', 'coin_blur',
