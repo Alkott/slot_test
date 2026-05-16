@@ -62,6 +62,7 @@ export class Reel extends Container {
 
   spin(): void {
     if (this.state !== SpinState.IDLE) return
+    for (const sym of this.symbols) sym.randomize(this.symbolWidth, this.symbolHeight)
     this.state = SpinState.ACCELERATING
     this.elapsed = 0
     this.velocity = 0
@@ -125,7 +126,6 @@ export class Reel extends Container {
 
   private recycleTop(): void {
     const top = this.symbols.shift()!
-    top.randomize(this.symbolWidth, this.symbolHeight)
     this.symbols.push(top)
   }
 
