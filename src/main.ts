@@ -56,15 +56,10 @@ async function main(): Promise<void> {
   let controls!: Controls
 
   const sync = (): void => {
-    const isSpinning = machines.some((m) => m.isSpinning)
-    controls?.update(machines.length, machines[0].reelCount, machines[0].rowCount, isSpinning)
+    controls?.update(machines.length, machines.some((m) => m.isSpinning))
   }
 
   controls = new Controls({
-    onAdd: () => { machines.forEach((m) => m.addReel()); relayout(); sync() },
-    onRemove: () => { machines.forEach((m) => m.removeReel()); relayout(); sync() },
-    onAddRow: () => { machines.forEach((m) => m.addRow()); relayout(); sync() },
-    onRemoveRow: () => { machines.forEach((m) => m.removeRow()); relayout(); sync() },
     onAddMachine: () => { addMachine(); sync() },
     onRemoveMachine: () => { removeMachine(); sync() },
     onSpin: () => { machines.forEach((m) => m.spin(sync)); sync() },

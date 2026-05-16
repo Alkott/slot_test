@@ -38,25 +38,6 @@ export class SlotGame {
     this.layout()
   }
 
-  removeReel(): void {
-    if (this.reels.length <= 1) return
-    const reel = this.reels.pop()!
-    this.reelContainer.removeChild(reel)
-    reel.destroy({ children: true })
-    this.layout()
-  }
-
-  addRow(): void {
-    this.rows++
-    this.layout()
-  }
-
-  removeRow(): void {
-    if (this.rows <= 1) return
-    this.rows--
-    this.layout()
-  }
-
   spin(onComplete: () => void): void {
     if (!this.reels.every((r) => r.isIdle)) return
     this.spinCompleteCallback = onComplete
@@ -70,7 +51,6 @@ export class SlotGame {
   }
 
   get reelCount(): number { return this.reels.length }
-  get rowCount(): number { return this.rows }
   get isSpinning(): boolean { return !this.reels.every((r) => r.isIdle) }
 
   private layout(): void {
