@@ -10,6 +10,9 @@ export class Controls {
   private btnSpin = document.getElementById('btn-spin') as HTMLButtonElement
 
   constructor(callbacks: ControlCallbacks) {
+    if (!this.btnAdd || !this.btnRemove || !this.btnSpin) {
+      throw new Error('Controls: btn-add, btn-remove, btn-spin must exist in the DOM')
+    }
     this.btnAdd.addEventListener('click', callbacks.onAdd)
     this.btnRemove.addEventListener('click', callbacks.onRemove)
     this.btnSpin.addEventListener('click', callbacks.onSpin)
