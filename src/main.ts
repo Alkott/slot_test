@@ -1,7 +1,6 @@
 import { Application } from 'pixi.js'
-import { ROWS } from './config'
-import { Reel } from './reel/Reel'
-import { FpsCounter } from './ui/FpsCounter'
+import { SlotGame } from './SlotGame'
+import { Controls } from './ui/Controls'
 
 async function main(): Promise<void> {
   const app = new Application()
@@ -14,42 +13,25 @@ async function main(): Promise<void> {
   })
   document.body.insertBefore(app.canvas, document.body.firstChild)
 
-  const reel = new Reel(ROWS)
-  app.stage.addChild(reel)
+  const game = new SlotGame(app)
+  game.addReel()
 
-  const fps = new FpsCounter()
-  app.stage.addChild(fps)
-
-  function layout(): void {
-    reel.resize({
-      rows: ROWS,
-      symbolWidth: app.screen.width,
-      symbolHeight: app.screen.height / ROWS,
-      x: 0,
-    })
-  }
-  layout()
-
-  const btnSpin = document.getElementById('btn-spin') as HTMLButtonElement
-  ;(document.getElementById('btn-add') as HTMLButtonElement).style.display = 'none'
-  ;(document.getElementById('btn-remove') as HTMLButtonElement).style.display = 'none'
-
-  btnSpin.addEventListener('click', () => {
-    if (!reel.isIdle) return
-    btnSpin.disabled = true
-    reel.spin()
+  const controls = new Controls({
+    onAdd: () => {
+      game.addReel()
+      controls.update(game.reelCount, game.isSpinning)
+    },
+    onRemove: () => {
+      game.removeReel()
+      controls.update(game.reelCount, game.isSpinning)
+    },
+    onSpin: () => {
+      game.spin(() => controls.update(game.reelCount, game.isSpinning))
+      controls.update(game.reelCount, game.isSpinning)
+    },
   })
 
-  app.ticker.add((ticker) => {
-    reel.update(ticker.deltaTime)
-    fps.update(ticker.deltaMS)
-    if (reel.isIdle) btnSpin.disabled = false
-  })
-
-  window.addEventListener('resize', () => {
-    app.renderer.resize(window.innerWidth, window.innerHeight)
-    layout()
-  })
+  controls.update(game.reelCount, game.isSpinning)
 }
 
 main()
