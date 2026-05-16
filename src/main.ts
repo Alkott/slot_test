@@ -17,22 +17,17 @@ async function main(): Promise<void> {
   const game = new SlotGame(app)
   game.addReel()
 
+  const sync = () => controls.update(game.reelCount, game.rowCount, game.isSpinning)
+
   const controls = new Controls({
-    onAdd: () => {
-      game.addReel()
-      controls.update(game.reelCount, game.isSpinning)
-    },
-    onRemove: () => {
-      game.removeReel()
-      controls.update(game.reelCount, game.isSpinning)
-    },
-    onSpin: () => {
-      game.spin(() => controls.update(game.reelCount, game.isSpinning))
-      controls.update(game.reelCount, game.isSpinning)
-    },
+    onAdd: () => { game.addReel(); sync() },
+    onRemove: () => { game.removeReel(); sync() },
+    onAddRow: () => { game.addRow(); sync() },
+    onRemoveRow: () => { game.removeRow(); sync() },
+    onSpin: () => { game.spin(sync); sync() },
   })
 
-  controls.update(game.reelCount, game.isSpinning)
+  sync()
 }
 
 main().catch(console.error)

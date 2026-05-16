@@ -9,6 +9,7 @@ export class SlotGame {
   private reelContainer = new Container()
   private fpsCounter: FpsCounter
   private app: Application
+  private rows: number = ROWS
 
   private spinCompleteCallback: (() => void) | null = null
 
@@ -35,7 +36,7 @@ export class SlotGame {
   }
 
   addReel(): void {
-    const reel = new Reel(ROWS)
+    const reel = new Reel(this.rows)
     this.reelContainer.addChild(reel)
     this.reels.push(reel)
     this.layout()
@@ -49,6 +50,17 @@ export class SlotGame {
     this.layout()
   }
 
+  addRow(): void {
+    this.rows++
+    this.layout()
+  }
+
+  removeRow(): void {
+    if (this.rows <= 1) return
+    this.rows--
+    this.layout()
+  }
+
   spin(onComplete: () => void): void {
     if (!this.reels.every((r) => r.isIdle)) return
     this.spinCompleteCallback = onComplete
@@ -57,6 +69,10 @@ export class SlotGame {
 
   get reelCount(): number {
     return this.reels.length
+  }
+
+  get rowCount(): number {
+    return this.rows
   }
 
   get isSpinning(): boolean {
@@ -69,7 +85,7 @@ export class SlotGame {
     const layouts = computeLayout(w, h, this.reels.length, SYMBOL_SIZE)
     this.reels.forEach((reel, i) => {
       const l = layouts[i]
-      reel.resize({ rows: ROWS, symbolWidth: l.size, symbolHeight: l.size, x: l.x, y: l.y })
+      reel.resize({ rows: this.rows, symbolWidth: l.size, symbolHeight: l.size, x: l.x, y: l.y })
     })
   }
 }
