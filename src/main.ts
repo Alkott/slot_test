@@ -11,6 +11,7 @@ async function main(): Promise<void> {
     resolution: window.devicePixelRatio,
     autoDensity: true,
   })
+  app.ticker.maxFPS = 60
   document.body.insertBefore(app.canvas, document.body.firstChild)
 
   const game = new SlotGame(app)
