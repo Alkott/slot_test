@@ -14,7 +14,6 @@ export class SlotGame {
 
   constructor(app: Application) {
     this.app = app
-    app.stage.addChild(this.reelContainer)
 
     this.tickerFn = (ticker) => {
       for (const reel of this.reels) reel.update(ticker.deltaTime)
@@ -25,6 +24,8 @@ export class SlotGame {
     }
     app.ticker.add(this.tickerFn)
   }
+
+  get container(): Container { return this.reelContainer }
 
   setViewport(x: number, y: number, width: number, height: number): void {
     this.viewport = { x, y, width, height }
@@ -46,7 +47,7 @@ export class SlotGame {
 
   destroy(): void {
     this.app.ticker.remove(this.tickerFn)
-    this.app.stage.removeChild(this.reelContainer)
+    this.reelContainer.parent?.removeChild(this.reelContainer)
     this.reelContainer.destroy({ children: true })
   }
 

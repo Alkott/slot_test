@@ -1,11 +1,10 @@
-import { Container, Graphics } from 'pixi.js'
+import { Container } from 'pixi.js'
 import { Symbol } from './Symbol'
 import { SpinState, ReelConfig } from '../types'
 import { MAX_SPEED, ACCEL_DURATION, DECEL_DURATION, MIN_SPIN_DURATION, SNAP_DURATION } from '../config'
 
 export class Reel extends Container {
   private symbols: Symbol[] = []
-  private maskGraphic = new Graphics()
   private symbolContainer = new Container()
 
   private state: SpinState = SpinState.IDLE
@@ -21,8 +20,7 @@ export class Reel extends Container {
   constructor(rows: number) {
     super()
     this.rows = rows
-    this.symbolContainer.mask = this.maskGraphic
-    this.addChild(this.symbolContainer, this.maskGraphic)
+    this.addChild(this.symbolContainer)
 
     for (let i = 0; i < rows + 2; i++) {
       const sym = new Symbol()
@@ -48,9 +46,6 @@ export class Reel extends Container {
       this.symbolContainer.removeChild(sym)
       sym.destroy()
     }
-
-    this.maskGraphic.clear()
-    this.maskGraphic.rect(0, 0, this.symbolWidth, this.rows * this.symbolHeight).fill(0xffffff)
 
     for (const sym of this.symbols) {
       sym.randomize(this.symbolWidth, this.symbolHeight)

@@ -7,10 +7,12 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "test": "vitest"
+    "test": "vitest",
+    "pack-atlas": "node scripts/pack-atlas.mjs"
   },
   "devDependencies": {
     "@vitest/coverage-v8": "^4.1.6",
+    "sharp": "^0.34.5",
     "typescript": "~6.0.2",
     "vite": "^8.0.12",
     "vitest": "^4.1.6"
