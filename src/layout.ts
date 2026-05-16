@@ -12,7 +12,6 @@ export function computeLayout(W: number, H: number, N: number, symbolSize: numbe
   if (rowCount * size > H) {
     size = H / rowCount
     reelsPerRow = Math.max(1, Math.floor(W / size))
-    size = W / reelsPerRow
   }
 
   return Array.from({ length: N }, (_, i) => ({

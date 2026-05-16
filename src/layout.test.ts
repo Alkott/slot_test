@@ -51,4 +51,13 @@ describe('computeLayout', () => {
     expect(layouts[1].x).toBe(0)
     expect(layouts[2].x).toBe(0)
   })
+
+  it('shrink holds when narrow screen cannot gain columns', () => {
+    // W=100, N=3, symbolSize=100 → reelsPerRow=1, size=100, rowCount=3
+    // 3*100=300 > 200 → shrink: size=66.67, reelsPerRow still 1 → size stays 66.67
+    const layouts = computeLayout(100, 200, 3, 100)
+    expect(layouts).toHaveLength(3)
+    const maxBottom = Math.max(...layouts.map(l => l.y + l.size))
+    expect(maxBottom).toBeLessThanOrEqual(200 + 0.01)
+  })
 })
