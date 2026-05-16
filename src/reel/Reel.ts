@@ -94,6 +94,10 @@ export class Reel extends Container {
         this.velocity = MAX_SPEED * (1 - easeOut(t))
         if (t >= 1) {
           this.velocity = 0
+          while (this.scrollOffset >= this.symbolHeight) {
+            this.scrollOffset -= this.symbolHeight
+            this.recycleTop()
+          }
           this.snapStartOffset = this.scrollOffset
           this.state = SpinState.SNAPPING
           this.elapsed = 0
